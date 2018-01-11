@@ -6,10 +6,18 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
+from PyQt4.QtGui import *   # import including QTimer
 from PyQt4.QtCore import *
 
 from glDesignMW import *
+import datetime
+
+import matplotlib.dates as mdates
+
+
+#def tick():
+#    print 'tick'
+
 
 
 # ==================================================================================
@@ -59,6 +67,57 @@ class MyGView(Ui_MainWindow):
 
     #ui.menuAbout.triggered.connect(actionProvide_feedback) 
     # ================================================================================================================
+
+    def GetDataFromDevice(self):
+        import urllib  # module with classes request parse ... we use only request class
+
+        
+        http_request = "http://192.168.12.1/sqlwrapper.php?len=500"
+        NetObject = urllib.urlopen(http_request)  # it works, but with modifications from system to system. .request was there before 
+        datatxt = NetObject.read().decode('utf-8')
+        #print(datatxt)
+        datatxt = datatxt.split('\r\n') # UNTERCHIED MIT UNSERE FORMAT "Wagenrücklaufe"
+        datatxt.pop(0)  # remove first element of list since it is just empty element in UNIWETTER data
+        datatxt.pop()  ## remove last element of list since it is just empty element
+    
+        ## error in december data:  
+        #run through all list and check the length of the line. 
+        #Presumably it should be more than 10 symbols.  practically 30
+        #remove all potentially bad records:  (smaller as 30 symbols.)
+        i=0
+        for drecord in datatxt:
+            #tmp = drecord.split('    ')
+            if (len(drecord)<30): 
+                datatxt.pop(i)
+            i = i+1
+    
+        tlength = len(datatxt)
+        for i in range(0,tlength):
+            datatxt[i] = datatxt[i].replace('\t',' ')  # replace Tab by space
+            #aa  = datatxt[i].replace('    ',' ')  # replace Tab by space
+            #aa1 = aa.split(' ')  # split into array
+            
+            
+        row = datatxt[0].split(' ')  # split into array
+        #print("we are here")
+        #print(row)
+        slength = len(row) # length of row
+        
+        #print(slength)
+        DateM = [row.split(' ')[0] for row in datatxt]
+        TimeM  =  [row.split(' ')[1] for row in datatxt]
+        RH  =  [row.split(' ')[2] for row in datatxt]        
+        T  =  [row.split(' ')[3] for row in datatxt]
+        self.CO2  =  [row.split(' ')[4] for row in datatxt]
+        self.x = []
+        for i in range(tlength):
+            dd = datetime.datetime.strptime(DateM[i] + ' ' + TimeM[i], '%d.%m.%Y %H:%M:%S')
+            self.x.append(dd)    
+        
+        #print(self.CO2)    
+    
+    #return xUni, ADataUni[1], ADataUni[4] 
+
     
     
     def WindowActionTest(self):
@@ -94,6 +153,9 @@ class MyGView(Ui_MainWindow):
         self.WindowActionCombo() # activates default Room 
 
     
+    def plot1(self):
+        self.plot(1)
+    
     def plot(self,room_id): # get argument - id of chosen room as it is in Combobox
         #-=-=-=-=-=-=-=-=-=-=-=-=-=-
         # The meaning and essence of this application is actually in Visualization of Data from remote computers
@@ -124,20 +186,32 @@ class MyGView(Ui_MainWindow):
         # accordingly, a toolbar must be defined.  
         
               
-                
+        myFmt = mdates.DateFormatter('%d.%m %H:%M')   # '%d.%m.%Y %H:%M'                  
         
         
-        data = [j*room_id for j in range(10)]
+        
+        
+        self.GetDataFromDevice()
 
         # create an axis
         ax = self.figure.add_subplot(111)        
         ax.clear()  # discards the old graph
 
-        # plot data
-        ax.plot(data, '*-')
+        
+
+        # generate and plot data
+        #data = [j*room_id for j in range(10)]        
+        #ax.plot(data, '*-')
+        
+        ax.plot(self.x, self.CO2, '*-')
+        
+        self.figure.autofmt_xdate()
+        ax.xaxis.set_major_formatter(myFmt)
+        ax.set_ylim([350, 2000])        
         
         # info about figure
         title = self.comboBox.itemText(room_id)
+        ax.set_ylabel('CO2, ppm')
         ax.set_title(title)
         ax.set_xlabel('t')
 
@@ -193,20 +267,23 @@ class MyGView(Ui_MainWindow):
         #msg.setInformativeText("This is additional information")
         msg.setWindowTitle("Help Message")
         #msg.setDetailedText("The details are as follows:")
-
+        
         #function displays desired buttons.
         msg.setStandardButtons(QMessageBox.Ok) #  | QMessageBox.Cancel
-
+        
         #msg.buttonClicked.connect(msgbtn)
         retval = msg.exec_()
         #print "value of pressed message box button:", retval
+        
+        
+        
 
     def WindowActionCombo(self):
 
         i = self.comboBox.currentIndex();
         smsg = self.comboBox.itemText(i)
         self.TestLabel.setText(_translate("MainWindow", smsg, None)) 
-               
+           
         self.plot(i)
 
     def ControlCO2Ampel_clicked(self):
@@ -227,6 +304,10 @@ if __name__ == "__main__":
     ui = MyGView()
     ui.setupUi(MainWindow)
     ui.init()
+
+    timer = QTimer()
+    timer.timeout.connect(ui.plot1)
+    timer.start(1000)
 
 
  

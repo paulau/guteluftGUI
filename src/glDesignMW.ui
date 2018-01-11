@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>565</height>
+    <width>1460</width>
+    <height>1011</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>741</width>
-      <height>511</height>
+      <width>1451</width>
+      <height>951</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -141,8 +141,8 @@
        <rect>
         <x>230</x>
         <y>80</y>
-        <width>491</width>
-        <height>381</height>
+        <width>1201</width>
+        <height>821</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="layout"/>
@@ -231,8 +231,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>744</width>
-     <height>28</height>
+     <width>1460</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMain">

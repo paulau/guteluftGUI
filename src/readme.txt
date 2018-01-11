@@ -17,6 +17,9 @@ python gl.py
 well for definition of menu functions simply def in derived object did not helped. Yet
 
 
+# to get WiFi working in debian:
+sudo apt install wireless-tools
+
 Git Getting started:
 		
 https://git-scm.com/book/en/v1/Getting-Started-Git-Basics

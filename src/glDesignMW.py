@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'glDesignMW.ui'
 #
-# Created: Thu Jan 11 11:00:18 2018
+# Created: Thu Jan 11 19:41:46 2018
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,11 +26,11 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(744, 565)
+        MainWindow.resize(1460, 1011)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 741, 511))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1451, 951))
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabGuteLuft = QtGui.QWidget()
         self.tabGuteLuft.setObjectName(_fromUtf8("tabGuteLuft"))
@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem(_fromUtf8(""))
         self.comboBox.addItem(_fromUtf8(""))
         self.verticalLayoutWidget = QtGui.QWidget(self.tabGuteLuft)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(230, 80, 491, 381))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(230, 80, 1201, 821))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.layout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.layout.setMargin(0)
@@ -104,7 +104,7 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.TabCO2Ampel, _fromUtf8(""))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 744, 28))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1460, 26))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuMain = QtGui.QMenu(self.menubar)
         self.menuMain.setObjectName(_fromUtf8("menuMain"))
