@@ -1,8 +1,18 @@
 #!/usr/bin/env python3 
 # -*- coding: utf-8 -*-
 
+
+# to do: main window layout is not defined properly
+# custom layout consists actually from one element figure of matplotlib. 
+# it does not fit properly
+
 # This is just executable application, opening the Main Window glDesignMW
 # https://www.tutorialspoint.com/pyqt/pyqt_multiple_document_interface.htm
+
+
+# sensors especially DHT 22 are slow. It takes too much time and irregular to get values. 
+# could be done using pthread to avoid waiting also for sensors 
+# after wait of LoggingRate
 
 import sys
 from PyQt4 import QtCore, QtGui
@@ -13,15 +23,12 @@ from glDesignMW import *
 import datetime
 
 import matplotlib.dates as mdates
-
-
-#def tick():
-#    print 'tick'
-
+import urllib  # module with classes request parse ... we use only request class
+from _mysql import NULL
 
 
 # ==================================================================================
-# This funny block is apparently for conversion of stricngs in different encoding
+# This funny block is apparently for conversion of strings in different encoding
 # copied from design object
 
 try:
@@ -33,10 +40,30 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 # ==================================================================================
-# First!!!! We inherite Design Class, developed in Qt Designer
+# First!!!! We inherit  Design Class, developed in Qt Designer
 
 class MyGView(Ui_MainWindow):
-    # and define or redefine its code :
+    # and add or redefine its code (properties and methods):
+    
+    # Properties:
+
+    MaximalDataAmount = 120
+
+    datatxt = [] # this is text data property which will be used to get Data From device
+    # Depending on use: update or initialization the text Data will be used in different ways    
+
+   
+    # Default initial Source and Data amount for visualization
+    DataSource1 =  "http://192.168.12.1/sqlwrapper.php?len="
+    #DataSource1 =  "http://192.168.2.112/sqlwrapper.php?len="
+    DataSource =  DataSource1
+    
+    Description = "CO2-Ampel"
+    DataAmount = MaximalDataAmount        
+
+
+    
+        
     
     #def __init__(self):
     # ###   self = Ui_MainWindow() # call constructor of parent
@@ -50,78 +77,129 @@ class MyGView(Ui_MainWindow):
     
     def init(self):        
         self.pushButton.clicked.connect(self.HelpButton_clicked) # connect onclick event of button with according function
-        self.actionProvide_feedback.triggered.connect(self.actionProvide_feedback1)     
-        self.actionAbout.triggered.connect(self.actionAbout1)   # Define Submenu Action for actionAbout
-        self.actionSave_Image.triggered.connect(self.WindowActionTest) #
+        self.submenuProvideFeedback.triggered.connect(self.actionProvideFeedback)     
+        self.submenuAbout.triggered.connect(self.actionAbout)   # Define Submenu Action for actionAbout
+        
         self.comboBox.currentIndexChanged.connect(self.WindowActionCombo) #
-        #self.comboBox.currentIndexChanged.triggered(self.WindowActionCombo) #
-        
-        self.InitialiseMatplotlib()
-        
+        #self.comboBox.currentIndexChanged.triggered(self.WindowActionCombo) #        
+        self.InitialiseMatplotlib()        
         self.pushButtonControlCO2Ampel.clicked.connect(self.ControlCO2Ampel_clicked) # connect onclick event of button with according function
+        self.checkBoxHumidity.clicked.connect(self.RePlot)
+        self.checkBoxTemperatur.clicked.connect(self.RePlot)
         
         
+        self.tabWidget.currentChanged.connect(self.onTab) #changed!
         
         
-        
+        #ui.menuAbout.triggered.connect(actionProvide_feedback) 
 
-    #ui.menuAbout.triggered.connect(actionProvide_feedback) 
     # ================================================================================================================
 
-    def GetDataFromDevice(self):
-        import urllib  # module with classes request parse ... we use only request class
 
+    # Function to get Data from Devices. 
+    # It uses property  DataSource of the object
+    # The property must be defined before first call of this function. 
+    
+    # this function uses also property DataAmount of the object.
+    # it must be accordingly also defined before first use.
+    
+    # The Function will be used for initial initialization during start of application
+    # or during change of source  e.g with DataAmount = 500
+    # or for data update with e.g. DataAmount =1    
+    
+    def GetDataFromDevice(self):
+        from sys import platform
         
-        http_request = "http://192.168.12.1/sqlwrapper.php?len=500"
-        NetObject = urllib.urlopen(http_request)  # it works, but with modifications from system to system. .request was there before 
-        datatxt = NetObject.read().decode('utf-8')
+          
+        http_request = self.DataSource + str(self.DataAmount)
+        #print(http_request) 
+        
+        if platform == "linux" or platform == "linux2":
+            NetObject = urllib.urlopen(http_request)  # it works, but with modifications from system to system. .request was there before
+        else:     
+            NetObject = urllib.request.urlopen(http_request)  # it works, but with modifications from system to system. .request was there before
+        
+        while len(self.datatxt) > 0 : self.datatxt.pop() # clean list
+             
+        self.datatxt = NetObject.read().decode('utf-8')
         #print(datatxt)
-        datatxt = datatxt.split('\r\n') # UNTERCHIED MIT UNSERE FORMAT "Wagenrücklaufe"
-        datatxt.pop(0)  # remove first element of list since it is just empty element in UNIWETTER data
-        datatxt.pop()  ## remove last element of list since it is just empty element
+        self.datatxt = self.datatxt.split('\r\n') # UNTERCHIED MIT UNSERE FORMAT "Wagenrücklaufe"
+        self.datatxt.pop()  ## remove last element of list since it is just empty element
     
-        ## error in december data:  
-        #run through all list and check the length of the line. 
-        #Presumably it should be more than 10 symbols.  practically 30
-        #remove all potentially bad records:  (smaller as 30 symbols.)
-        i=0
-        for drecord in datatxt:
-            #tmp = drecord.split('    ')
-            if (len(drecord)<30): 
-                datatxt.pop(i)
-            i = i+1
-    
-        tlength = len(datatxt)
+        tlength = len(self.datatxt)
         for i in range(0,tlength):
-            datatxt[i] = datatxt[i].replace('\t',' ')  # replace Tab by space
-            #aa  = datatxt[i].replace('    ',' ')  # replace Tab by space
-            #aa1 = aa.split(' ')  # split into array
+            self.datatxt[i] = self.datatxt[i].replace('\t',' ')  # replace Tab by space
+        
+    def ExtractData(self):
+
+        DateM = [row.split(' ')[0] for row in self.datatxt]
+        TimeM  =  [row.split(' ')[1] for row in self.datatxt]
+        RH  =  [row.split(' ')[2] for row in self.datatxt]        
+        T  =  [row.split(' ')[3] for row in self.datatxt]
+        CO2  =  [row.split(' ')[4] for row in self.datatxt]
+        tlength = len(self.datatxt)
+        #print(tlength)
+        
+        if (self.DataAmount>1):
+            # initial                
+            self.CO2 = []
+            self.x = []
+            self.T = []
+            self.RH = []
+            for i in range(tlength):
+                dd = datetime.datetime.strptime(DateM[i] + ' ' + TimeM[i], '%d.%m.%Y %H:%M:%S')
+                self.x.append(dd)    
+                self.CO2.append(CO2[i])
+                self.RH.append(RH[i])
+                self.T.append(T[i])
+            #print(self.CO2)
+            #print(self.x)
             
             
-        row = datatxt[0].split(' ')  # split into array
-        #print("we are here")
-        #print(row)
-        slength = len(row) # length of row
-        
-        #print(slength)
-        DateM = [row.split(' ')[0] for row in datatxt]
-        TimeM  =  [row.split(' ')[1] for row in datatxt]
-        RH  =  [row.split(' ')[2] for row in datatxt]        
-        T  =  [row.split(' ')[3] for row in datatxt]
-        self.CO2  =  [row.split(' ')[4] for row in datatxt]
-        self.x = []
-        for i in range(tlength):
-            dd = datetime.datetime.strptime(DateM[i] + ' ' + TimeM[i], '%d.%m.%Y %H:%M:%S')
-            self.x.append(dd)    
-        
-        #print(self.CO2)    
+        else:
+            
+            
+            for i in range(tlength):
+                dd = datetime.datetime.strptime(DateM[i] + ' ' + TimeM[i], '%d.%m.%Y %H:%M:%S')
+                if (dd!=self.x[0]): # do it only if new measurement is read
+                
+                    # REMOVE last element of list (earliest time) RECORD FROM self.CO2 and self.x append without clean:
+                    if (len(self.x)>self.MaximalDataAmount): # just after restart of device the data sequence is short 
+                        # first the data will be expanded and they will be poped 
+                        # if needed range is reached
+                        self.CO2.pop(-1) 
+                        self.x.pop(-1)
+                        self.RH.pop(-1)
+                        self.T.pop(-1)
+                
+                
+                    # insert in the beginning
+                    self.x = [dd] + self.x     
+                    self.CO2 = [CO2[i]] + self.CO2   
+                    self.RH = [RH[i]] + self.RH
+                    self.T = [T[i]] + self.T
+                
+                
     
     #return xUni, ADataUni[1], ADataUni[4] 
 
+    def UpdateDataFromDevice(self):
+        ## 
+        self.DataAmount = 1 # to get just last record
+        self.GetDataFromDevice() 
+        self.ExtractData()
+
+
+        
+       # self.CO2.append(CO2Value)
+        #self.x.append(dd)    
+        
+            
+    def UpdateAndPlot(self):
+        self.UpdateDataFromDevice()
+        self.plot()
     
     
-    def WindowActionTest(self):
-        print ("Window Action Test")
 
     # ============================================================================================================
     # Actions to handle Matplotlib things:
@@ -130,6 +208,8 @@ class MyGView(Ui_MainWindow):
         from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
         from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
         from matplotlib.figure import Figure
+        
+        
 
         #import random
 
@@ -150,13 +230,17 @@ class MyGView(Ui_MainWindow):
         #self.layout.addWidget(self.button)
         #self.setLayout(layout)        
         
-        self.WindowActionCombo() # activates default Room 
-
+        
+        self.GetDataFromDevice()  # actually it should be one function for first initialisation
+        self.ExtractData()
+        self.plot()
     
-    def plot1(self):
-        self.plot(1)
+    def RePlot(self): # get argument - id of chosen room as it is in Combobox
+        self.DataAmount=self.MaximalDataAmount
+        self.plot()    
     
-    def plot(self,room_id): # get argument - id of chosen room as it is in Combobox
+    
+    def plot(self): # get argument - id of chosen room as it is in Combobox
         #-=-=-=-=-=-=-=-=-=-=-=-=-=-
         # The meaning and essence of this application is actually in Visualization of Data from remote computers
         # therefore the data must be necessarily taken from some network computer. 
@@ -185,38 +269,69 @@ class MyGView(Ui_MainWindow):
         # This software has options to work with A) local  device - CO2-Ampel B) with gutelugt.jade-HS.de
         # accordingly, a toolbar must be defined.  
         
+
+        self.LabelInfo.setText(_translate("MainWindow", self.Description, None))       
+
               
-        myFmt = mdates.DateFormatter('%d.%m %H:%M')   # '%d.%m.%Y %H:%M'                  
-        
-        
-        
-        
-        self.GetDataFromDevice()
+        # do it only once      
+        self.myFmt = mdates.DateFormatter('%H:%M')   # '%d.%m.%Y %H:%M'        
+        self.legends = ['Temperatur', 'relative Feuchtigkeit', 'CO2-Konzentration']
 
-        # create an axis
-        ax = self.figure.add_subplot(111)        
-        ax.clear()  # discards the old graph
-
+        if (self.DataAmount>1): # First initialisation:
+            # create an axis
+            self.figure.clear()
+            self.ax = self.figure.add_subplot(111)
         
-
-        # generate and plot data
-        #data = [j*room_id for j in range(10)]        
-        #ax.plot(data, '*-')
+            self.ax.clear()  # discards the old graph        
+                
+            self.ax.set_ylabel(u'T, °C, oder RH, %') # 
+            self.ax1r = self.ax.twinx()    
+            #ax1r.clear()  # discards the old graph 
+            self.ax1r.set_ylabel('CO2, ppm')
+            self.ax1r.set_ylim([300, 3000])
+            leftmargin= 0.13
+            h = 0.94
+            shift = 0.03
+            s = "Start Date and Time: "  + self.x[-1].strftime("%d.%m.%Y %H:%M")
+            self.figure.text(leftmargin, h, s)
+            h = h - shift           
+            self.figure.text(leftmargin, h, "Description: " + self.Description + '.')
+            #self.figure.autofmt_xdate()
+            self.ax.xaxis.set_major_formatter(self.myFmt)
+            self.ax.set_ylim([10, 105])        
         
-        ax.plot(self.x, self.CO2, '*-')
+            # info about figure
+            #title = "Luftqualitaet"
+            
+            #ax.set_title(title)
+            self.ax.set_xlabel('t')
+
+            line1 = self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
+            lns = line1
+            if (self.checkBoxTemperatur.checkState()):
+                line2 = self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
+                lns =  lns + line2
+            if (self.checkBoxHumidity.checkState()):      
+                line3 = self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
+                lns =  lns + line3
+            
+            labs = [l.get_label() for l in lns]
+            self.figure.legend(lns, labs, loc='upper center', ncol=3, prop={'size':10},  markerscale=2) #   , bbox_to_anchor=(0.5, -0.2)        
+        else:
+            if (self.checkBoxTemperatur.checkState()):
+                self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
+            if (self.checkBoxHumidity.checkState()):    
+                self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
+                
+            self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
+            
+            
+            
+            
+            
+            
+                
         
-        self.figure.autofmt_xdate()
-        ax.xaxis.set_major_formatter(myFmt)
-        ax.set_ylim([350, 2000])        
-        
-        # info about figure
-        title = self.comboBox.itemText(room_id)
-        ax.set_ylabel('CO2, ppm')
-        ax.set_title(title)
-        ax.set_xlabel('t')
-
-
-
         # refresh canvas
         self.canvas.draw()
         
@@ -226,35 +341,23 @@ class MyGView(Ui_MainWindow):
     # ============================================================================================================
     # Menu Actions
 
-    def actionProvide_feedback1(self):
-        #This function will be implemented later
-       
-        print ("Help Button clicked")
+    def actionProvideFeedback(self):
+        #This function is just to train menu points       
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
-        msg.setText("It will be implemented later.")    
+        msg.setText("Just simple at the moment. email: p.v.paulau@gmail.com")    
         msg.setStandardButtons(QMessageBox.Ok) #  | QMessageBox.Cancel #function displays desired buttons.
-        retval = msg.exec_()
+        msg.exec_()
 
-    def actionAbout1(self):
+
+    def actionAbout(self):
         #This function just shows About Info. 
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
-        msg.setText("gl - Gute Luft Software. To view the data of airquality Sensors. 2018. Jade Hochschule.")    
-        msg.setWindowTitle("About guteluft.jade-hs.de")
+        msg.setText("gl - Gute Luft Software. To view the data of airquality Sensors. To Control Device via Tango. 2018. DESY, Jade Hochschule.")    
+        msg.setWindowTitle("About guteluftGUI")
         msg.setStandardButtons(QMessageBox.Ok) #  | QMessageBox.Cancel #function displays desired buttons.
-        retval = msg.exec_()
-
-    def actionAboutOne(self):
-        #This function just shows About Info. 
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.setText("gl - Gute Luft Software. To view the data of airquality Sensors. 2018. Jade Hochschule.")    
-        msg.setWindowTitle("About guteluft.jade-hs.de")
-        msg.setStandardButtons(QMessageBox.Ok) #  | QMessageBox.Cancel #function displays desired buttons.
-        retval = msg.exec_()
-
-
+        msg.exec_()
 
     # ============================================================================================================
     # Actions of Buttons ComboBox and other elements of the Window.
@@ -282,14 +385,54 @@ class MyGView(Ui_MainWindow):
 
         i = self.comboBox.currentIndex();
         smsg = self.comboBox.itemText(i)
-        self.TestLabel.setText(_translate("MainWindow", smsg, None)) 
-           
-        self.plot(i)
+        self.LabelInfo.setText(_translate("MainWindow", smsg, None))       
+        
+        self.DataSource =  self.DataSource1 #"http://192.168.12.1/sqlwrapper.php?len=" # must be adjusted here for each room
+        self.Description = self.comboBox.itemText(i)
+        self.DataAmount = self.MaximalDataAmount        
+        
+        self.GetDataFromDevice()  # actually it should be one function for first initialisation
+        self.ExtractData()
+        self.plot()
+
+    # Override resize event
+    def resizeEvent(self, event):
+        print("resize")
 
     def ControlCO2Ampel_clicked(self):
-        print("sdsd")
+        import PyTango
+        
+        print("================================================")
+        dev = PyTango.DeviceProxy("p11/test/CO2Ampel")
+        print(dev.ping()) 
+        print("================================================")
+        print(dev.info()) 
+        
+        dev.Start()
+
+        
+        #self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 200, 300, 591))
+        
         #self.verticalLayoutWidget = QtGui.QWidget(self.TabCO2Ampel)
         #self.layout.
+        
+        
+    def onTab(self):
+        ci = self.tabWidget.currentIndex()
+        if (ci == 0):                        
+            self.DataSource =  self.DataSource1
+            self.Description = "Jade-Hochschule"
+            self.DataAmount = self.MaximalDataAmount
+            
+            self.WindowActionCombo()        
+            
+        if (ci == 1):
+            self.DataSource =  self.DataSource1            
+            self.Description = "CO2-Ampel"
+            self.DataAmount = self.MaximalDataAmount        
+    
+    #tabGuteLuft 
+            
 
 # ============================================================================================================
 # Main code:
@@ -306,7 +449,11 @@ if __name__ == "__main__":
     ui.init()
 
     timer = QTimer()
-    timer.timeout.connect(ui.plot1)
+
+    # it should be one function for initial Get Data and another function for update, 
+    # since one record must be added and one record must be deleted and not just reread    
+        
+    timer.timeout.connect(ui.UpdateAndPlot)
     timer.start(1000)
 
 
