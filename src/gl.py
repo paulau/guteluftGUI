@@ -24,7 +24,7 @@ import datetime
 
 import matplotlib.dates as mdates
 import urllib  # module with classes request parse ... we use only request class
-from _mysql import NULL
+
 
 
 # ==================================================================================
@@ -54,8 +54,8 @@ class MyGView(Ui_MainWindow):
 
    
     # Default initial Source and Data amount for visualization
-    DataSource1 =  "http://192.168.12.1/sqlwrapper.php?len="
-    #DataSource1 =  "http://192.168.2.112/sqlwrapper.php?len="
+    #DataSource1 =  "http://192.168.12.1/sqlwrapper.php?len="
+    DataSource1 =  "http://192.168.2.110/sqlwrapper.php?len="
     DataSource =  DataSource1
     
     Description = "CO2-Ampel"
