@@ -20,42 +20,6 @@ well for definition of menu functions simply def in derived object did not helpe
 # to get WiFi working in debian:
 sudo apt install wireless-tools
 
-Git Getting started:
-		
-https://git-scm.com/book/en/v1/Getting-Started-Git-Basics
 
-
-# Assume - git is installed (on Linux)
-# Do it also on Windows. See Manual above
-
-git config --global user.name "Pavel Paulau"
-
-
-use wuthout --global   for specific projects:
-git config  --global user.email pavel.paulau@desy.de
-p.v.paulau@gmail.com
-
-
-go to Project Folder and 
-git init
-git add src
-git add WindowsPyQT4
-git commit -m 'initial project version'
-
-git commit -m 'Clean auto generated folders and files'
-
-in project folder:
-git config   user.email p.v.paulau@gmail.com
-
-remote repository is registered on webpage of gihub
-git remote add origin https://github.com/paulau/guteluftGUI.git
-
-git push -u origin master
-
-
-
-
-
-git + eclipse
-http://www.vogella.com/tutorials/EclipseGit/article.html
+_______________________________________________________________________
 
