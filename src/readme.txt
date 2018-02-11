@@ -1,3 +1,6 @@
+screenshot demo video is done using:
+https://github.com/rdp/screen-capture-recorder-to-video-windows-free/releases
+
 
 Version_00_QtHelloWorld : The work started with making hallo world application.
 Version_01_Form: The work continued making simple application on the base of single Widget - Form 

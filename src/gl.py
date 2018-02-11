@@ -55,7 +55,8 @@ class MyGView(Ui_MainWindow):
    
     # Default initial Source and Data amount for visualization
     #DataSource1 =  "http://192.168.12.1/sqlwrapper.php?len="
-    DataSource1 =  "http://192.168.2.110/sqlwrapper.php?len="
+    #DataSource1 =  "http://192.168.2.110/sqlwrapper.php?len="
+    DataSource1 =  "http://192.168.10.2/sqlwrapper.php?len="
     DataSource =  DataSource1
     
     Description = "CO2-Ampel"
@@ -157,17 +158,19 @@ class MyGView(Ui_MainWindow):
             
             
         else:
+
             
-            
-            for i in range(tlength):
+            for i in range(tlength):                
                 dd = datetime.datetime.strptime(DateM[i] + ' ' + TimeM[i], '%d.%m.%Y %H:%M:%S')
                 if (dd!=self.x[0]): # do it only if new measurement is read
                 
                     # REMOVE last element of list (earliest time) RECORD FROM self.CO2 and self.x append without clean:
                     if (len(self.x)>self.MaximalDataAmount): # just after restart of device the data sequence is short 
+                        
                         # first the data will be expanded and they will be poped 
                         # if needed range is reached
                         self.CO2.pop(-1) 
+                        
                         self.x.pop(-1)
                         self.RH.pop(-1)
                         self.T.pop(-1)
@@ -272,52 +275,21 @@ class MyGView(Ui_MainWindow):
 
         self.LabelInfo.setText(_translate("MainWindow", self.Description, None))       
 
-              
-        # do it only once      
-        self.myFmt = mdates.DateFormatter('%H:%M')   # '%d.%m.%Y %H:%M'        
-        self.legends = ['Temperatur', 'relative Feuchtigkeit', 'CO2-Konzentration']
-
         if (self.DataAmount>1): # First initialisation:
-            # create an axis
-            self.figure.clear()
-            self.ax = self.figure.add_subplot(111)
-        
-            self.ax.clear()  # discards the old graph        
-                
-            self.ax.set_ylabel(u'T, °C, oder RH, %') # 
-            self.ax1r = self.ax.twinx()    
-            #ax1r.clear()  # discards the old graph 
-            self.ax1r.set_ylabel('CO2, ppm')
-            self.ax1r.set_ylim([300, 3000])
-            leftmargin= 0.13
-            h = 0.94
-            shift = 0.03
-            s = "Start Date and Time: "  + self.x[-1].strftime("%d.%m.%Y %H:%M")
-            self.figure.text(leftmargin, h, s)
-            h = h - shift           
-            self.figure.text(leftmargin, h, "Description: " + self.Description + '.')
-            #self.figure.autofmt_xdate()
-            self.ax.xaxis.set_major_formatter(self.myFmt)
-            self.ax.set_ylim([10, 105])        
-        
-            # info about figure
-            #title = "Luftqualitaet"
+            self.SetFrame()
             
-            #ax.set_title(title)
-            self.ax.set_xlabel('t')
-
             line1 = self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
-            lns = line1
+            self.lns = line1
+            
             if (self.checkBoxTemperatur.checkState()):
                 line2 = self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
-                lns =  lns + line2
+                self.lns =  self.lns + line2
             if (self.checkBoxHumidity.checkState()):      
                 line3 = self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
-                lns =  lns + line3
+                self.lns =  self.lns + line3
             
-            labs = [l.get_label() for l in lns]
-            self.figure.legend(lns, labs, loc='upper center', ncol=3, prop={'size':10},  markerscale=2) #   , bbox_to_anchor=(0.5, -0.2)        
         else:
+            self.SetFrame()
             if (self.checkBoxTemperatur.checkState()):
                 self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
             if (self.checkBoxHumidity.checkState()):    
@@ -325,8 +297,7 @@ class MyGView(Ui_MainWindow):
                 
             self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
             
-            
-            
+        self.SetFrameAfterPlot()
             
             
             
@@ -335,7 +306,39 @@ class MyGView(Ui_MainWindow):
         # refresh canvas
         self.canvas.draw()
         
+    def SetFrame(self):
+        # do it only once      
+        self.myFmt = mdates.DateFormatter('%H:%M')   # '%d.%m.%Y %H:%M'        
+        self.legends = ['Temperatur', 'relative Feuchtigkeit', 'CO2-Konzentration']
+        # create an axis
+        self.figure.clear()
+        self.ax = self.figure.add_subplot(111)
+        self.ax.clear()  # discards the old graph        
+        self.ax.set_ylabel(u'T, °C, oder RH, %') # 
+        self.ax1r = self.ax.twinx()    
+        self.ax1r.clear()  # discards the old graph 
+        self.ax1r.set_ylabel('CO2, ppm')
+        self.ax1r.set_ylim([300, 3000])
+        leftmargin= 0.13
+        h = 0.94
+        shift = 0.03
+        s = "Start Date and Time: "  + self.x[-1].strftime("%d.%m.%Y %H:%M")
+        self.figure.text(leftmargin, h, s)
+        h = h - shift           
+        self.figure.text(leftmargin, h, "Description: " + self.Description + '.')
+        #self.figure.autofmt_xdate()
+        self.ax.xaxis.set_major_formatter(self.myFmt)
+        self.ax.set_ylim([0, 105])        
+        
+        # info about figure
+        #title = "Luftqualitaet"
+        
+        #ax.set_title(title)
+        self.ax.set_xlabel('t')
 
+    def SetFrameAfterPlot(self):        
+        self.labs = [l.get_label() for l in self.lns]
+        self.figure.legend(self.lns, self.labs, loc='upper center', ncol=3, prop={'size':10},  markerscale=2) #   , bbox_to_anchor=(0.5, -0.2)        
 
 
     # ============================================================================================================
