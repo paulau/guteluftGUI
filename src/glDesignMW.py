@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'glDesignMW.ui'
 #
-# Created: Mon Feb 12 23:43:58 2018
+# Created: Mon Feb 12 23:55:30 2018
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,11 +17,11 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1129, 836)
+        MainWindow.resize(1247, 850)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(-140, 0, 1451, 141))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1451, 141))
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabGuteLuft = QtGui.QWidget()
         self.tabGuteLuft.setObjectName(_fromUtf8("tabGuteLuft"))
@@ -99,14 +99,18 @@ class Ui_MainWindow(object):
         self.labelInfo.setFont(font)
         self.labelInfo.setObjectName(_fromUtf8("labelInfo"))
         self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 220, 1091, 571))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 220, 1211, 601))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.layout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.layout.setContentsMargins(-1, -1, 0, -1)
         self.layout.setObjectName(_fromUtf8("layout"))
+        self.InfoLabel = QtGui.QLabel(self.centralwidget)
+        self.InfoLabel.setGeometry(QtCore.QRect(360, 190, 591, 16))
+        self.InfoLabel.setText(_fromUtf8(""))
+        self.InfoLabel.setObjectName(_fromUtf8("InfoLabel"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1129, 19))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1247, 19))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuMain = QtGui.QMenu(self.menubar)
         self.menuMain.setObjectName(_fromUtf8("menuMain"))
@@ -116,9 +120,6 @@ class Ui_MainWindow(object):
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
-        self.toolBar = QtGui.QToolBar(MainWindow)
-        self.toolBar.setObjectName(_fromUtf8("toolBar"))
-        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.submenuProvideFeedback = QtGui.QAction(MainWindow)
         self.submenuProvideFeedback.setObjectName(_fromUtf8("submenuProvideFeedback"))
         self.submenuAbout = QtGui.QAction(MainWindow)
@@ -152,7 +153,6 @@ class Ui_MainWindow(object):
         self.labelInfo.setText(QtGui.QApplication.translate("MainWindow", "Live visualisation of Data from device:", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMain.setTitle(QtGui.QApplication.translate("MainWindow", "Main", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.submenuProvideFeedback.setText(QtGui.QApplication.translate("MainWindow", "Provide feedback", None, QtGui.QApplication.UnicodeUTF8))
         self.submenuAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
 
