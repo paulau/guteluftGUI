@@ -21,6 +21,7 @@ from PyQt4.QtCore import *
 
 from glDesignMW import *
 import datetime
+import PyTango
 
 import matplotlib.dates as mdates
 import urllib  # module with classes request parse ... we use only request class
@@ -85,14 +86,28 @@ class MyGView(Ui_MainWindow):
         #self.comboBox.currentIndexChanged.triggered(self.WindowActionCombo) #        
         self.InitialiseMatplotlib()        
         self.pushButtonControlCO2Ampel.clicked.connect(self.ControlCO2Ampel_clicked) # connect onclick event of button with according function
+        self.pushButton_2.clicked.connect(self.ControlCO2Ampel_On) # connect onclick event of button with according function
+        self.pushButton_3.clicked.connect(self.ControlCO2Ampel_Off) # connect onclick event of button with according function
         self.checkBoxHumidity.clicked.connect(self.RePlot)
         self.checkBoxTemperatur.clicked.connect(self.RePlot)
+        
+        self.spinBox.valueChanged.connect(self.ControlCO2Ampel_SetLight) # connect onclick event of button with according function
+        
         
         
         self.tabWidget.currentChanged.connect(self.onTab) #changed!
         
         
         #ui.menuAbout.triggered.connect(actionProvide_feedback) 
+        try:
+            print("================================================")
+            self.dev = PyTango.DeviceProxy("p11/test/CO2Ampel")
+            print(self.dev.ping()) 
+            print("================================================")
+            print(self.dev.info()) 
+        except:
+            pass
+
 
     # ================================================================================================================
 
@@ -273,7 +288,7 @@ class MyGView(Ui_MainWindow):
         # accordingly, a toolbar must be defined.  
         
 
-        self.LabelInfo.setText(_translate("MainWindow", self.Description, None))       
+        self.InfoLabel.setText(_translate("MainWindow", self.Description, None))       
 
         if (self.DataAmount>1): # First initialisation:
             self.SetFrame()
@@ -388,7 +403,7 @@ class MyGView(Ui_MainWindow):
 
         i = self.comboBox.currentIndex();
         smsg = self.comboBox.itemText(i)
-        self.LabelInfo.setText(_translate("MainWindow", smsg, None))       
+        self.InfoLabel.setText(_translate("MainWindow", smsg, None))       
         
         self.DataSource =  self.DataSource1 #"http://192.168.12.1/sqlwrapper.php?len=" # must be adjusted here for each room
         self.Description = self.comboBox.itemText(i)
@@ -403,23 +418,43 @@ class MyGView(Ui_MainWindow):
         print("resize")
 
     def ControlCO2Ampel_clicked(self):
-        import PyTango
+        try:
+            self.dev.StartTest()
+        except:
+            pass
         
-        print("================================================")
-        dev = PyTango.DeviceProxy("p11/test/CO2Ampel")
-        print(dev.ping()) 
-        print("================================================")
-        print(dev.info()) 
-        
-        dev.Start()
+    def ControlCO2Ampel_On(self):
+        try:
+            self.dev.SwitchOn()
+        except:
+            print("No device server available")
+            pass
 
+    def ControlCO2Ampel_Off(self):
+        try:
+            self.dev.SwitchOff()
+        except:
+            print("No device server available")
+            pass
         
         #self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 200, 300, 591))
         
         #self.verticalLayoutWidget = QtGui.QWidget(self.TabCO2Ampel)
         #self.layout.
         
+    def ControlCO2Ampel_SetLight(self):
+        try:
+            ###self.InfoLabel.setText(self.spinBox.value())
+            print(self.spinBox.value())
+            self.dev.SetLight(self.spinBox.value())
+        except:
+            print("No device server available")
+            pass
+
         
+    
+    
+    
     def onTab(self):
         ci = self.tabWidget.currentIndex()
         if (ci == 0):                        
