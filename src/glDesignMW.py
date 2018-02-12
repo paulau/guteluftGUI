@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'glDesignMW.ui'
 #
-# Created: Fri Jan 12 17:02:46 2018
-#      by: PyQt4 UI code generator 4.11.2
+# Created: Mon Feb 12 23:43:58 2018
+#      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,25 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+    _fromUtf8 = lambda s: s
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(863, 721)
+        MainWindow.resize(1129, 836)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 1451, 121))
+        self.tabWidget.setGeometry(QtCore.QRect(-140, 0, 1451, 141))
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabGuteLuft = QtGui.QWidget()
         self.tabGuteLuft.setObjectName(_fromUtf8("tabGuteLuft"))
@@ -74,23 +65,32 @@ class Ui_MainWindow(object):
         self.label_4.setFont(font)
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.label_6 = QtGui.QLabel(self.TabCO2Ampel)
-        self.label_6.setGeometry(QtCore.QRect(330, 0, 481, 91))
+        self.label_6.setGeometry(QtCore.QRect(360, 0, 421, 71))
         self.label_6.setWordWrap(True)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.pushButtonControlCO2Ampel = QtGui.QPushButton(self.TabCO2Ampel)
-        self.pushButtonControlCO2Ampel.setGeometry(QtCore.QRect(10, 40, 211, 27))
+        self.pushButtonControlCO2Ampel.setGeometry(QtCore.QRect(360, 70, 141, 27))
         self.pushButtonControlCO2Ampel.setObjectName(_fromUtf8("pushButtonControlCO2Ampel"))
+        self.pushButton_2 = QtGui.QPushButton(self.TabCO2Ampel)
+        self.pushButton_2.setGeometry(QtCore.QRect(509, 70, 75, 27))
+        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
+        self.pushButton_3 = QtGui.QPushButton(self.TabCO2Ampel)
+        self.pushButton_3.setGeometry(QtCore.QRect(592, 70, 83, 27))
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
+        self.spinBox = QtGui.QSpinBox(self.TabCO2Ampel)
+        self.spinBox.setGeometry(QtCore.QRect(710, 70, 54, 27))
+        self.spinBox.setObjectName(_fromUtf8("spinBox"))
         self.tabWidget.addTab(self.TabCO2Ampel, _fromUtf8(""))
         self.checkBoxTemperatur = QtGui.QCheckBox(self.centralwidget)
-        self.checkBoxTemperatur.setGeometry(QtCore.QRect(20, 121, 131, 23))
+        self.checkBoxTemperatur.setGeometry(QtCore.QRect(40, 160, 131, 23))
         self.checkBoxTemperatur.setChecked(True)
         self.checkBoxTemperatur.setObjectName(_fromUtf8("checkBoxTemperatur"))
         self.checkBoxHumidity = QtGui.QCheckBox(self.centralwidget)
-        self.checkBoxHumidity.setGeometry(QtCore.QRect(20, 151, 101, 23))
+        self.checkBoxHumidity.setGeometry(QtCore.QRect(40, 140, 101, 23))
         self.checkBoxHumidity.setChecked(True)
         self.checkBoxHumidity.setObjectName(_fromUtf8("checkBoxHumidity"))
         self.labelInfo = QtGui.QLabel(self.centralwidget)
-        self.labelInfo.setGeometry(QtCore.QRect(30, 180, 251, 16))
+        self.labelInfo.setGeometry(QtCore.QRect(40, 190, 291, 16))
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Bitstream Charter"))
         font.setPointSize(10)
@@ -99,17 +99,14 @@ class Ui_MainWindow(object):
         self.labelInfo.setFont(font)
         self.labelInfo.setObjectName(_fromUtf8("labelInfo"))
         self.verticalLayoutWidget = QtGui.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 210, 831, 441))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 220, 1091, 571))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.layout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.layout.setContentsMargins(-1, -1, 0, -1)
         self.layout.setObjectName(_fromUtf8("layout"))
-        self.LabelInfo = QtGui.QLabel(self.centralwidget)
-        self.LabelInfo.setGeometry(QtCore.QRect(280, 180, 191, 18))
-        self.LabelInfo.setObjectName(_fromUtf8("LabelInfo"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 863, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1129, 19))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuMain = QtGui.QMenu(self.menubar)
         self.menuMain.setObjectName(_fromUtf8("menuMain"))
@@ -136,25 +133,26 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "guteluft.jade-hs.de", None))
-        self.label.setText(_translate("MainWindow", "This section is to view a data of guteluft.jade-hs.de", None))
-        self.label_2.setText(_translate("MainWindow", "Chose the room:", None))
-        self.comboBox.setItemText(0, _translate("MainWindow", "H-I-07", None))
-        self.comboBox.setItemText(1, _translate("MainWindow", "H-I-10", None))
-        self.comboBox.setItemText(2, _translate("MainWindow", "H-I-21", None))
-        self.pushButton.setText(_translate("MainWindow", "Get help!", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGuteLuft), _translate("MainWindow", "guteluft.jade-hs.de", None))
-        self.label_4.setText(_translate("MainWindow", "This section is to view a data of CO2-Ampel", None))
-        self.label_6.setText(_translate("MainWindow", "<html><head/><body><p align=\"justify\">We will train here to control Device via Tango. For training aims, the MySQL Tango-Database(Tango Server) must be configured on some computer.  &quot;Tango Device Server&quot; - just Raspberry controlling LEDS. </p></body></html>", None))
-        self.pushButtonControlCO2Ampel.setText(_translate("MainWindow", "Test \"Control Device\"", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.TabCO2Ampel), _translate("MainWindow", "CO2-Ampel", None))
-        self.checkBoxTemperatur.setText(_translate("MainWindow", "Temperatur", None))
-        self.checkBoxHumidity.setText(_translate("MainWindow", "Humidity", None))
-        self.labelInfo.setText(_translate("MainWindow", "Live visualisation of Data from device:", None))
-        self.LabelInfo.setText(_translate("MainWindow", "____", None))
-        self.menuMain.setTitle(_translate("MainWindow", "Main", None))
-        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.submenuProvideFeedback.setText(_translate("MainWindow", "Provide feedback", None))
-        self.submenuAbout.setText(_translate("MainWindow", "About", None))
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "guteluft.jade-hs.de", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("MainWindow", "This section is to view a data of guteluft.jade-hs.de", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("MainWindow", "Chose the room:", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(0, QtGui.QApplication.translate("MainWindow", "H-I-07", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(1, QtGui.QApplication.translate("MainWindow", "H-I-10", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.setItemText(2, QtGui.QApplication.translate("MainWindow", "H-I-21", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton.setText(QtGui.QApplication.translate("MainWindow", "Get help!", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabGuteLuft), QtGui.QApplication.translate("MainWindow", "guteluft.jade-hs.de", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("MainWindow", "This section is to view a data of CO2-Ampel", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("MainWindow", "<html><head/><body><p align=\"justify\">We will train here to control Device via Tango. For training aims, the MySQL Tango-Database(Tango Server) must be configured on some computer.  &quot;Tango Device Server&quot; - just Raspberry controlling LEDS. </p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonControlCO2Ampel.setText(QtGui.QApplication.translate("MainWindow", "Test \"Tango Device\"", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_2.setText(QtGui.QApplication.translate("MainWindow", "LED On", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_3.setText(QtGui.QApplication.translate("MainWindow", "LED OFF", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.TabCO2Ampel), QtGui.QApplication.translate("MainWindow", "CO2-Ampel", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxTemperatur.setText(QtGui.QApplication.translate("MainWindow", "Temperatur", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBoxHumidity.setText(QtGui.QApplication.translate("MainWindow", "Humidity", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelInfo.setText(QtGui.QApplication.translate("MainWindow", "Live visualisation of Data from device:", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuMain.setTitle(QtGui.QApplication.translate("MainWindow", "Main", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.submenuProvideFeedback.setText(QtGui.QApplication.translate("MainWindow", "Provide feedback", None, QtGui.QApplication.UnicodeUTF8))
+        self.submenuAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
 
