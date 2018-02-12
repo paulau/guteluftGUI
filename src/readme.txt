@@ -23,3 +23,5 @@ sudo apt install wireless-tools
 
 _______________________________________________________________________
 
+to work with qt designer and tools:
+apt-get install pyqt4-dev-tools qt4-designer
