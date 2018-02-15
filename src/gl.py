@@ -295,19 +295,20 @@ class MyGView(Ui_MainWindow):
             
             line1 = self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
             self.lns = line1
-            
+            # funny. checkState() function in python linux library returns values 2 and 0 in windows it was 1 and 0
+            print(self.checkBoxTemperatur.checkState()>0) 
             if (self.checkBoxTemperatur.checkState()):
                 line2 = self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
                 self.lns =  self.lns + line2
-            if (self.checkBoxHumidity.checkState()):      
+            if (self.checkBoxHumidity.checkState()>0):      
                 line3 = self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
                 self.lns =  self.lns + line3
             
         else:
             self.SetFrame()
-            if (self.checkBoxTemperatur.checkState()):
+            if (self.checkBoxTemperatur.checkState()>0):
                 self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
-            if (self.checkBoxHumidity.checkState()):    
+            if (self.checkBoxHumidity.checkState()>0):    
                 self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
                 
             self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
