@@ -1,6 +1,8 @@
 #!/usr/bin/env python3 
 # -*- coding: utf-8 -*-
 
+#to test without wifi usefull linux command is:
+#ifconfig eth1 192.168.0.100 netmask 255.255.255.0 up
 
 # to do: main window layout is not defined properly
 # custom layout consists actually from one element figure of matplotlib. 
@@ -289,35 +291,26 @@ class MyGView(Ui_MainWindow):
         
 
         self.InfoLabel.setText(_translate("MainWindow", self.Description, None))       
-
+        self.SetFrame()
+        
         if (self.DataAmount>1): # First initialisation:
-            self.SetFrame()
-            
             line1 = self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
             self.lns = line1
-            # funny. checkState() function in python linux library returns values 2 and 0 in windows it was 1 and 0
-            print(self.checkBoxTemperatur.checkState()>0) 
-            if (self.checkBoxTemperatur.checkState()):
-                line2 = self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
+            # funny. checkState() function in python linux library returns different values (0 and 2 are possible) as in windows (True or False). It has something t do with tristate            
+            if (self.checkBoxTemperatur.isChecked()): 
+                line2 = self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])                
                 self.lns =  self.lns + line2
-            if (self.checkBoxHumidity.checkState()>0):      
+            if (self.checkBoxHumidity.isChecked()):
                 line3 = self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
                 self.lns =  self.lns + line3
-            
         else:
-            self.SetFrame()
-            if (self.checkBoxTemperatur.checkState()>0):
-                self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
-            if (self.checkBoxHumidity.checkState()>0):    
-                self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
-                
             self.ax1r.plot(self.x, self.CO2, '.', color='#00FF00', label=self.legends[2])
+            if (self.checkBoxTemperatur.isChecked()): 
+                self.ax.plot(self.x, self.T, '.', color='#FF0000', label=self.legends[0])
+            if (self.checkBoxHumidity.isChecked()): 
+                self.ax.plot(self.x, self.RH, '.', color='#0000FF', label=self.legends[1])
             
         self.SetFrameAfterPlot()
-            
-            
-            
-                
         
         # refresh canvas
         self.canvas.draw()
@@ -330,11 +323,21 @@ class MyGView(Ui_MainWindow):
         self.figure.clear()
         self.ax = self.figure.add_subplot(111)
         self.ax.clear()  # discards the old graph        
-        self.ax.set_ylabel(u'T, °C, oder RH, %') # 
+        
         self.ax1r = self.ax.twinx()    
-        self.ax1r.clear()  # discards the old graph 
+        #self.ax1r.clear()  # discards the old graph 
+
+        
+        #self.figure.autofmt_xdate()
+        # info about figure
+        #title = "Luftqualitaet"
+        #ax.set_title(title)
+
+    def SetFrameAfterPlot(self):        
         self.ax1r.set_ylabel('CO2, ppm')
         self.ax1r.set_ylim([300, 3000])
+        self.ax.set_ylabel(u'T, °C, oder RH, %') # 
+        self.ax.set_xlabel('t')
         leftmargin= 0.13
         h = 0.94
         shift = 0.03
@@ -342,17 +345,8 @@ class MyGView(Ui_MainWindow):
         self.figure.text(leftmargin, h, s)
         h = h - shift           
         self.figure.text(leftmargin, h, "Description: " + self.Description + '.')
-        #self.figure.autofmt_xdate()
         self.ax.xaxis.set_major_formatter(self.myFmt)
         self.ax.set_ylim([0, 105])        
-        
-        # info about figure
-        #title = "Luftqualitaet"
-        
-        #ax.set_title(title)
-        self.ax.set_xlabel('t')
-
-    def SetFrameAfterPlot(self):        
         self.labs = [l.get_label() for l in self.lns]
         self.figure.legend(self.lns, self.labs, loc='upper center', ncol=3, prop={'size':10},  markerscale=2) #   , bbox_to_anchor=(0.5, -0.2)        
 
