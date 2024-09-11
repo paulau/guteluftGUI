@@ -16,4 +16,5 @@ according git repository RHTCO2: https://github.com/paulau/RHTCO2.git
 src/  - Python sources of the guteluftGUI project, including ui project of QT Designer, text descriptions and some training versions.
 WindowsPyQT4/  - some materials, to get project working on Windows 
 
+
 Pavel Paulau
